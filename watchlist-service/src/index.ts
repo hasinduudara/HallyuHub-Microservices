@@ -26,6 +26,19 @@ app.post('/api/watchlist', (req: Request, res: Response) => {
     res.status(201).json({ message: 'Added to watchlist successfully', item: { userId, catalogId, rating } });
 });
 
+// 3. Remove K-Drama from Watchlist API
+app.delete('/api/watchlist/:userId/:catalogId', (req: Request, res: Response) => {
+    const { userId, catalogId } = req.params;
+    
+    const index = watchlist.findIndex(item => item.userId === userId && item.catalogId === catalogId);
+    if (index !== -1) {
+        watchlist.splice(index, 1);
+        res.status(200).json({ message: 'Removed from watchlist successfully' });
+    } else {
+        res.status(404).json({ message: 'Item not found in watchlist' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Watchlist service is running on http://localhost:${PORT}`);
 });
