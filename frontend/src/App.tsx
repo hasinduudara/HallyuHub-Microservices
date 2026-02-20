@@ -55,10 +55,19 @@ function App() {
                 catalogId: catalogId,
                 rating: rating
             });
-            alert("Added to Watchlist!");
             fetchWatchlist();
         } catch (error) {
             console.error("Error adding to watchlist:", error);
+        }
+    };
+
+    // Remove item from watchlist
+    const removeFromWatchlist = async (catalogId: string) => {
+        try {
+            await axios.delete(`http://localhost:3001/api/watchlist/${USER_ID}/${catalogId}`);
+            fetchWatchlist();
+        } catch (error) {
+            console.error("Error removing from watchlist:", error);
         }
     };
 
@@ -97,6 +106,13 @@ function App() {
                                 <div key={index} style={{ border: '1px solid #28a745', padding: '10px', margin: '10px 0', borderRadius: '8px', backgroundColor: '#f8fff9' }}>
                                     <h4>{catalogDetails?.title || `Item ID: ${item.catalogId}`}</h4>
                                     <p>Given Rating: ⭐ {item.rating}</p>
+
+                                    <button
+                                        onClick={() => removeFromWatchlist(item.catalogId)}
+                                        style={{ marginTop: '10px', padding: '6px 12px', cursor: 'pointer', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
+                                    >
+                                        🗑️ Remove
+                                    </button>
                                 </div>
                             );
                         })
