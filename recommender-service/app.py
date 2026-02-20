@@ -15,23 +15,27 @@ def get_recommendations(user_id):
         catalog = catalog_response.json()
 
         if not watchlist:
-            return jsonify(catalog[:2])
+            return jsonify([])
 
         watched_ids = [item['catalogId'] for item in watchlist]
-        watched_categories = []
         
+        user_genres = set()
         for item in watchlist:
             for cat_item in catalog:
                 if cat_item['id'] == item['catalogId']:
-                    watched_categories.append(cat_item['category'])
+                    genres = cat_item['category'].replace('/', ' ').split()
+                    for g in genres:
+                        user_genres.add(g)
         
         recommendations = []
         for cat_item in catalog:
-            if cat_item['id'] not in watched_ids and cat_item['category'] in watched_categories:
-                recommendations.append(cat_item)
-        
+            if cat_item['id'] not in watched_ids:
+                item_genres = cat_item['category'].replace('/', ' ').split()
+                if any(genre in user_genres for genre in item_genres):
+                    recommendations.append(cat_item)
+
         if not recommendations:
-            recommendations = [item for item in catalog if item['id'] not in watched_ids]
+            recommendations = [item for item in catalog if item['id'] not in watched_ids][:2]
 
         return jsonify(recommendations)
 
