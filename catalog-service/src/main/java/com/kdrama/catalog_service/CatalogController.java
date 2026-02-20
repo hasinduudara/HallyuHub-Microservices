@@ -1,5 +1,6 @@
 package com.kdrama.catalog_service;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/catalog")
+@CrossOrigin(origins = "*")
 public class CatalogController {
 
     private List<CatalogItem> catalogItems = Arrays.asList(
