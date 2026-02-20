@@ -80,7 +80,7 @@ function App() {
 
             <div style={{ display: 'flex', gap: '40px' }}>
                 <div style={{ flex: 1 }}>
-                    <h2>Available Catalog (From Java Service)</h2>
+                    <h2>Available Catalog</h2>
                     {catalog.map((item) => (
                         <div key={item.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0', borderRadius: '8px' }}>
                             <h3>{item.title} ({item.releaseYear})</h3>
@@ -96,7 +96,7 @@ function App() {
                 </div>
 
                 <div style={{ flex: 1 }}>
-                    <h2>My Watchlist (From Node.js Service)</h2>
+                    <h2>My Watchlist</h2>
                     {watchlist.length === 0 ? (
                         <p>Your watchlist is empty.</p>
                     ) : (
