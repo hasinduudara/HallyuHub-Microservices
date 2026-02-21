@@ -25,7 +25,7 @@ function App() {
 
     const fetchCatalog = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/catalog');
+            const response = await axios.get('https://catalog-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/catalog');
             setCatalog(response.data);
         } catch (error) {
             console.error("Error fetching catalog:", error);
@@ -34,7 +34,7 @@ function App() {
 
     const fetchWatchlist = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/watchlist/${USER_ID}`);
+            const response = await axios.get(`https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist/${USER_ID}`);
             setWatchlist(response.data);
         } catch (error) {
             console.error("Error fetching watchlist:", error);
@@ -43,7 +43,7 @@ function App() {
 
     const fetchRecommendations = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/recommendations/${USER_ID}`);
+            const response = await axios.get(`https://recommender-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/recommendations/${USER_ID}`);
             setRecommendations(response.data);
         } catch (error) {
             console.error("Error fetching recommendations:", error);
@@ -60,7 +60,7 @@ function App() {
 
     const addToWatchlist = async (catalogId: string, rating: number) => {
         try {
-            await axios.post('http://localhost:3001/api/watchlist', {
+            await axios.post('https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist', {
                 userId: USER_ID,
                 catalogId: catalogId,
                 rating: rating
@@ -74,7 +74,7 @@ function App() {
 
     const removeFromWatchlist = async (catalogId: string) => {
         try {
-            await axios.delete(`http://localhost:3001/api/watchlist/${USER_ID}/${catalogId}`);
+            await axios.delete(`https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist/${USER_ID}/${catalogId}`);
             await fetchWatchlist();
             await fetchRecommendations();
         } catch (error) {
