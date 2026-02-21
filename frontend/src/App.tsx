@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Data Types
 interface CatalogItem {
@@ -24,170 +25,207 @@ function App() {
     const USER_ID = "user_01";
 
     const fetchCatalog = async () => {
-        try {
-            const response = await axios.get('https://catalog-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/catalog');
-            setCatalog(response.data);
-        } catch (error) {
-            console.error("Error fetching catalog:", error);
-        }
+        const res = await axios.get(
+            "https://catalog-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/catalog"
+        );
+        setCatalog(res.data);
     };
 
     const fetchWatchlist = async () => {
-        try {
-            const response = await axios.get(`https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist/${USER_ID}`);
-            setWatchlist(response.data);
-        } catch (error) {
-            console.error("Error fetching watchlist:", error);
-        }
+        const res = await axios.get(
+            `https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist/${USER_ID}`
+        );
+        setWatchlist(res.data);
     };
 
     const fetchRecommendations = async () => {
-        try {
-            const response = await axios.get(`https://recommender-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/recommendations/${USER_ID}`);
-            setRecommendations(response.data);
-        } catch (error) {
-            console.error("Error fetching recommendations:", error);
-        }
+        const res = await axios.get(
+            `https://recommender-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/recommendations/${USER_ID}`
+        );
+        setRecommendations(res.data);
     };
 
     useEffect(() => {
-        (async () => {
+        const fetchData = async () => {
             await fetchCatalog();
             await fetchWatchlist();
             await fetchRecommendations();
-        })();
+        };
+        fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const addToWatchlist = async (catalogId: string, rating: number) => {
-        try {
-            await axios.post('https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist', {
-                userId: USER_ID,
-                catalogId: catalogId,
-                rating: rating
-            });
-            await fetchWatchlist();
-            await fetchRecommendations();
-        } catch (error) {
-            console.error("Error adding to watchlist:", error);
-        }
+        await axios.post(
+            "https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist",
+            { userId: USER_ID, catalogId, rating }
+        );
+        fetchWatchlist();
+        fetchRecommendations();
     };
 
     const removeFromWatchlist = async (catalogId: string) => {
-        try {
-            await axios.delete(`https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist/${USER_ID}/${catalogId}`);
-            await fetchWatchlist();
-            await fetchRecommendations();
-        } catch (error) {
-            console.error("Error removing from watchlist:", error);
-        }
+        await axios.delete(
+            `https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist/${USER_ID}/${catalogId}`
+        );
+        fetchWatchlist();
+        fetchRecommendations();
     };
 
     return (
-        <div className="min-h-screen bg-slate-100 py-8 px-4 md:px-8 font-sans text-slate-800">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-indigo-100/40 py-10 px-4 md:px-8 text-slate-800"
+        >
             <div className="max-w-[1400px] mx-auto">
-                {/* Header Section */}
-                <header className="mb-8 text-center">
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-2 tracking-tight">
+                {/* Header */}
+                <motion.header
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 120 }}
+                    className="mb-10 text-center"
+                >
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mb-3">
                         🎬 K-Drama & Movie Tracker
                     </h1>
-                    <p className="text-slate-500 font-medium text-sm">
-                        Currently watching as: <span className="text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">{USER_ID}</span>
+                    <p className="text-slate-500 text-sm">
+                        Watching as{" "}
+                        <span className="ml-1 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 font-semibold">
+              {USER_ID}
+            </span>
                     </p>
-                </header>
+                </motion.header>
 
-                {/* Main Content Grid */}
+                {/* Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-
-                    {/* 1. Catalog Section */}
-                    <div className="bg-white p-5 rounded-2xl shadow-sm border-t-4 border-t-blue-500 border-x border-b border-slate-200">
-                        <h2 className="text-xl font-bold mb-4 text-slate-800 flex items-center gap-2">
-                            <span className="text-blue-500">📺</span> Available Catalog
+                    {/* Catalog */}
+                    <motion.div
+                        whileHover={{ y: -4 }}
+                        className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-white/60"
+                    >
+                        <h2 className="text-xl font-bold mb-4 flex gap-2">
+                            📺 Available Catalog
                         </h2>
+
                         <div className="flex flex-col gap-3">
                             {catalog.map((item) => (
-                                <div key={item.id} className="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:border-blue-200 transition-all flex flex-col gap-3">
-                                    <div>
-                                        <h3 className="text-base font-bold text-slate-800 leading-tight">{item.title} <span className="text-xs font-normal text-slate-500">({item.releaseYear})</span></h3>
-                                        <p className="text-xs text-slate-600 mt-1">
-                                            <span className="font-semibold">{item.category}</span> • ⭐ {item.rating}
-                                        </p>
-                                    </div>
+                                <motion.div
+                                    key={item.id}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="p-4 rounded-xl bg-white border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all"
+                                >
+                                    <h3 className="font-bold">
+                                        {item.title}{" "}
+                                        <span className="text-xs text-slate-500">
+                      ({item.releaseYear})
+                    </span>
+                                    </h3>
+                                    <p className="text-xs text-slate-600 mt-1">
+                                        {item.category} • ⭐ {item.rating}
+                                    </p>
+
                                     <button
                                         onClick={() => addToWatchlist(item.id, item.rating)}
-                                        className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-all active:scale-95"
+                                        className="mt-3 w-full py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md active:scale-95 transition-all"
                                     >
                                         + Add to Watchlist
                                     </button>
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
-                    </div>
+                    </motion.div>
 
-                    {/* 2. Watchlist Section */}
-                    <div className="bg-white p-5 rounded-2xl shadow-sm border-t-4 border-t-emerald-500 border-x border-b border-slate-200">
-                        <h2 className="text-xl font-bold mb-4 text-slate-800 flex items-center gap-2">
-                            <span className="text-emerald-500">✅</span> My Watchlist
+                    {/* Watchlist */}
+                    <motion.div
+                        whileHover={{ y: -4 }}
+                        className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-white/60"
+                    >
+                        <h2 className="text-xl font-bold mb-4 flex gap-2">
+                            ✅ My Watchlist
                         </h2>
+
                         <div className="flex flex-col gap-3">
                             {watchlist.length === 0 ? (
-                                <div className="text-center py-10 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-300">
-                                    <p className="text-slate-500 text-sm font-medium">Your watchlist is empty.</p>
+                                <div className="py-10 text-center text-slate-500 border border-dashed rounded-xl">
+                                    Watchlist is empty
                                 </div>
                             ) : (
-                                watchlist.map((item, index) => {
-                                    const catalogDetails = catalog.find(c => c.id === item.catalogId);
+                                watchlist.map((item) => {
+                                    const details = catalog.find(
+                                        (c) => c.id === item.catalogId
+                                    );
                                     return (
-                                        <div key={index} className="p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 flex flex-col gap-3">
-                                            <div>
-                                                <h4 className="text-base font-bold text-slate-800 leading-tight">{catalogDetails?.title || `Item ID: ${item.catalogId}`}</h4>
-                                                <p className="text-xs text-emerald-700 font-medium mt-1">Rating: ⭐ {item.rating}</p>
-                                            </div>
-                                            <button
-                                                onClick={() => removeFromWatchlist(item.catalogId)}
-                                                className="w-full py-2 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-semibold rounded-lg transition-all active:scale-95 flex items-center justify-center gap-2"
+                                        <motion.div
+                                            key={item.catalogId}
+                                            whileHover={{ scale: 1.02 }}
+                                            className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200"
+                                        >
+                                            <h4 className="font-bold">
+                                                {details?.title || item.catalogId}
+                                            </h4>
+                                            <p className="text-xs text-emerald-700">
+                                                ⭐ {item.rating}
+                                            </p>
+
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() =>
+                                                    removeFromWatchlist(item.catalogId)
+                                                }
+                                                className="mt-3 w-full py-2 rounded-lg text-sm font-semibold border border-red-200 text-red-600 hover:bg-red-50 transition"
                                             >
                                                 🗑️ Remove
-                                            </button>
-                                        </div>
+                                            </motion.button>
+                                        </motion.div>
                                     );
                                 })
                             )}
                         </div>
-                    </div>
+                    </motion.div>
 
-                    {/* 3. AI Recommendations Section */}
-                    <div className="bg-gradient-to-b from-indigo-50/50 to-white p-5 rounded-2xl shadow-sm border-t-4 border-t-indigo-500 border-x border-b border-slate-200">
-                        <h2 className="text-xl font-bold mb-4 text-indigo-900 flex items-center gap-2">
+                    {/* Recommendations */}
+                    <motion.div
+                        whileHover={{ y: -4 }}
+                        className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-white/60"
+                    >
+                        <h2 className="text-xl font-bold mb-4 flex gap-2">
                             ✨ AI Recommended
                         </h2>
 
                         <div className="flex flex-col gap-3">
-                            {recommendations.length === 0 ? (
-                                <div className="text-center py-10 px-4 bg-white rounded-xl border border-dashed border-indigo-200">
-                                    <p className="text-indigo-400 text-sm font-medium">Add movies to your watchlist to get AI recommendations!</p>
-                                </div>
-                            ) : (
-                                recommendations.map((item) => (
-                                    <div key={`rec-${item.id}`} className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm hover:shadow-md transition-all flex items-start gap-3">
-                                        <div className="w-10 h-10 shrink-0 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-lg">
+                            <AnimatePresence>
+                                {recommendations.map((item, i) => (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, y: 15 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.05 }}
+                                        whileHover={{ scale: 1.03 }}
+                                        className="p-4 bg-white rounded-xl border border-indigo-200 shadow-sm hover:shadow-lg flex gap-3"
+                                    >
+                                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
                                             🍿
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-bold text-indigo-950 leading-tight">{item.title}</h3>
-                                            <p className="text-xs text-indigo-700/80 mt-1">Year: {item.releaseYear}</p>
-                                            <span className="inline-block mt-2 px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded border border-indigo-100">
-                                                {item.category}
-                                            </span>
+                                            <h3 className="font-bold text-sm">{item.title}</h3>
+                                            <p className="text-xs text-indigo-600">
+                                                {item.releaseYear}
+                                            </p>
+                                            <span className="inline-block mt-2 px-2 py-0.5 text-[10px] bg-indigo-50 border border-indigo-200 rounded">
+                        {item.category}
+                      </span>
                                         </div>
-                                    </div>
-                                ))
-                            )}
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
                         </div>
-                    </div>
-
+                    </motion.div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
 
