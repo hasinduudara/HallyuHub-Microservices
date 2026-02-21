@@ -8,10 +8,10 @@ CORS(app)
 @app.route('/api/recommendations/<user_id>', methods=['GET'])
 def get_recommendations(user_id):
     try:
-        watchlist_response = requests.get(f'http://localhost:3001/api/watchlist/{user_id}')
+        watchlist_response = requests.get(f'https://watchlist-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/watchlist/{user_id}')
         watchlist = watchlist_response.json()
 
-        catalog_response = requests.get('http://localhost:8080/api/catalog')
+        catalog_response = requests.get('https://catalog-app.icyhill-d8a50826.southeastasia.azurecontainerapps.io/api/catalog')
         catalog = catalog_response.json()
 
         if not watchlist:
@@ -43,4 +43,4 @@ def get_recommendations(user_id):
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
